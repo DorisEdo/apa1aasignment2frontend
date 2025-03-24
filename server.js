@@ -18,6 +18,29 @@ const PORT = process.env.PORT || 3000;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_API_KEY = process.env.SUPABASE_ANON_KEY;
 
+app.use(express.json())
+
+// POST - Create a new recipe
+app.post('/api/recipes', async (req, res) => {
+  const body = JSON.stringify(req.body);
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/recipes`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body
+    });
+
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}); 
+
 // API endpoint that calls Supabase Edge Function
 app.get('/api/recipes', async (req, res) => {
   try {
@@ -49,27 +72,6 @@ app.get('/api/recipes', async (req, res) => {
       error: 'Failed to fetch messages',
       message: error.message
     });
-  }
-});
-
-// POST - Create a new recipe
-app.post('/api/recipes', express.json(), async (req, res) => {
-  const body = JSON.stringify(req.body);
-
-  try {
-    const response = await fetch(`${SUPABASE_URL}/functions/v1/recipes`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body
-    });
-
-    const data = await response.json();
-    res.status(response.status).json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
 });
 
