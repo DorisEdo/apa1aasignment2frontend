@@ -94,6 +94,27 @@ app.put('/api/recipes', express.json(), async (req, res) => {
   }
 });
 
+// DELETE - Delete a recipe
+app.delete('/api/recipes', express.json(), async (req, res) => {
+  const body = JSON.stringify(req.body);
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/recipes`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body
+    });
+
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Simple response for root path
 app.get('/', (req, res) => {
   res.send('Express server is running. Please access the React app through the Vite dev server.');
