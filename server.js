@@ -52,6 +52,27 @@ app.get('/api/recipes', async (req, res) => {
   }
 });
 
+// POST - Create a new recipe
+app.post('/api/recipes', express.json(), async (req, res) => {
+  const body = JSON.stringify(req.body);
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/recipes`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body
+    });
+
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Simple response for root path
 app.get('/', (req, res) => {
   res.send('Express server is running. Please access the React app through the Vite dev server.');
