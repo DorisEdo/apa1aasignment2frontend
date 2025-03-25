@@ -138,7 +138,7 @@ function App() {
         <label><strong>Filter by Category:</strong></label>
         <select value={filter} onChange={(e) => setFilter(e.target.value)}>
           <option value="">-- All --</option>
-          <option value="Moisturizing">Moisturizing</option>
+          <option value="Moisturising">Moisturising</option>
           <option value="Growth">Growth</option>
           <option value="Deep Repair Mask">Deep Repair Mask</option>
           <option value="Cleansing">Cleansing</option>
