@@ -4,53 +4,61 @@ import "./index.css";
 
 function App() {
   const [recipes, setRecipes] = useState([]);
+  const [form, setForm] = useState({
+    id: null,
+    title: "",
+    ingredients: "",
+    instructions: "",
+    category: "",
+    image_url: ""
+  });
+  const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch all recipes
   const getRecipes = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/recipes"); // implicitly performing a GET as it has only one parameter
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
+      const response = await fetch("/api/recipes");
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
       setRecipes(data);
-      setError(null);
     } catch (err) {
       setError(err.message);
-      setRecipes([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const postRecipes = async () => {
+  // Handle form changes
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // Submit new or updated recipe
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       setLoading(true);
+      const method = form.id ? "PUT" : "POST";
+
       const response = await fetch("/api/recipes", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: "Macadamia",
-          ingredients: "macademia oil, olive oil, yoghurt",
-          instructions: "combine ingredients in a bowl, apply to damp hair, cover and leave in for 15-20mins",
-          category: "Deep Repair Mask",
-          image_url: "test",
-        }),
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("New recipe made!", data)
-      setError(null);
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      setForm({
+        id: null,
+        title: "",
+        ingredients: "",
+        instructions: "",
+        category: "",
+        image_url: ""
+      });
+      getRecipes();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -58,58 +66,24 @@ function App() {
     }
   };
 
-  const putRecipe = async (id) => {
-    try {
-      setLoading(true);
-      const response = await fetch("/api/recipes", {
-        method: "PUT",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          id,
-          title: "Coconut and Aloe Strengthening Conditioner",
-          ingredients: "coconut oil, aloe vera, honey, olive oil, and apple cider vinegar",
-          instructions: "mix all ingredients together",
-          category: "trengthening Conditioner",
-          image_url: " "
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Recipe updated!", data);
-      setError(null);
-      getRecipes(); // Refresh list
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  // Populate form to edit
+  const handleEdit = (recipe) => {
+    setForm(recipe);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const deleteRecipe = async (id) => {
+  // Delete recipe
+  const handleDelete = async (id) => {
     try {
       setLoading(true);
       const response = await fetch("/api/recipes", {
         method: "DELETE",
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Recipe deleted!", data);
-      setError(null);
-      getRecipes(); // Refresh list
+      if (!response.ok) throw new Error("Failed to delete");
+      getRecipes();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -117,39 +91,86 @@ function App() {
     }
   };
 
+  const filteredRecipes = filter
+    ? recipes.filter((r) => r.category?.toLowerCase() === filter.toLowerCase())
+    : recipes;
+
   useEffect(() => {
-    // getRecipes();
-    postRecipes();
+    getRecipes();
   }, []);
 
   return (
-    <div>
-      <h1>Hello World</h1>
+    <div className="container">
+      <h1>🌿 Natural Hair Recipe App</h1>
 
-      {loading && <p>Loading recipes...</p>}
+      {/* Form */}
+      <form onSubmit={handleSubmit}>
+        <h2>{form.id ? "Edit Recipe" : "Add a New Recipe"}</h2>
 
-      {error && <p>Error: {error}</p>}
+        <label>Title</label>
+        <input name="title" value={form.title} onChange={handleChange} required />
 
-      {!loading && !error && (
-        <div>
-          <h2>Recipes:</h2>
-          {recipes.length === 0 ? (
-            <p>No recipes found</p>
-          ) : (
-            <ul>
-              {recipes.map((recipe, index) => (
-                <>
-                  <li className="add-border" key={index}>
-                    {recipe.title}
-                  </li>
-                  <li key={index}>{recipe.ingredients}</li>
-                  <li key={index}>{recipe.instructions}</li>
-                  <li key={index}>{recipe.category}</li>
-                </>
-              ))}
-            </ul>
-          )}
-        </div>
+        <label>Ingredients</label>
+        <textarea name="ingredients" value={form.ingredients} onChange={handleChange} required />
+
+        <label>Instructions</label>
+        <textarea name="instructions" value={form.instructions} onChange={handleChange} required />
+
+        <label>Category</label>
+        <input name="category" value={form.category} onChange={handleChange} />
+
+        <label>Image URL</label>
+        <input name="image_url" value={form.image_url} onChange={handleChange} />
+
+        {form.image_url && (
+          <img
+            src={form.image_url}
+            alt="Preview"
+            style={{ maxWidth: "100%", marginBottom: "1rem", borderRadius: "8px" }}
+          />
+        )}
+
+        <button type="submit">{form.id ? "Update Recipe" : "Add Recipe"}</button>
+      </form>
+
+      {/* Filters */}
+      <div style={{ marginTop: "2rem" }}>
+        <label><strong>Filter by Category:</strong></label>
+        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <option value="">-- All --</option>
+          <option value="Moisturizing">Moisturizing</option>
+          <option value="Growth">Growth</option>
+          <option value="Deep Repair Mask">Deep Repair Mask</option>
+          <option value="Cleansing">Cleansing</option>
+          <option value="Styling">Styling</option>
+        </select>
+      </div>
+
+      {/* Status */}
+      {loading && <p>Loading...</p>}
+      {error && <p className="error">Error: {error}</p>}
+
+      {/* Recipes */}
+      <h2 style={{ marginTop: "2rem" }}>Recipes:</h2>
+      {filteredRecipes.length === 0 ? (
+        <p>No recipes found.</p>
+      ) : (
+        filteredRecipes.map((recipe) => (
+          <div className="recipe-card" key={recipe.id}>
+            <h3>{recipe.title}</h3>
+            {recipe.image_url && (
+              <img src={recipe.image_url} alt={recipe.title} style={{ width: "100%", borderRadius: "8px" }} />
+            )}
+            <p><strong>Ingredients:</strong> {recipe.ingredients}</p>
+            <p><strong>Instructions:</strong> {recipe.instructions}</p>
+            <p><strong>Category:</strong> {recipe.category}</p>
+
+            <div className="recipe-actions">
+              <button className="edit-btn" onClick={() => handleEdit(recipe)}>Edit</button>
+              <button className="delete-btn" onClick={() => handleDelete(recipe.id)}>Delete</button>
+            </div>
+          </div>
+        ))
       )}
     </div>
   );
@@ -157,3 +178,4 @@ function App() {
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
+

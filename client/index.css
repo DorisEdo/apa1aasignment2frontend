@@ -1,37 +1,149 @@
+ /* Base Layout  */
 body {
-    font-family: sans-serif;
-    background-color: #f9f9f9;
-    margin: 0;
-    padding: 2rem;
-  }
-  
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f3f0f9;
+  color: #333;
+  margin: 0;
+  padding: 2rem;
+}
+
+/* Container */
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Header */
+h1 {
+  text-align: center;
+  color: #6a1b9a;
+  margin-bottom: 2rem;
+}
+
+/* Form */
+form {
+  margin-bottom: 2rem;
+}
+
+label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.3rem;
+  margin-top: 1rem;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #ab47bc;
+  outline: none;
+}
+
+/* Buttons */
+button {
+  background-color: #ab47bc;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-right: 0.5rem;
+}
+
+button:hover {
+  background-color: #8e24aa;
+  transform: scale(1.02);
+}
+
+/* Recipe Card */
+.recipe-card {
+  background: #fafafa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  margin-bottom: 1.5rem;
+  position: relative;
+  transition: box-shadow 0.2s ease;
+}
+
+.recipe-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.recipe-card h3 {
+  margin-top: 0;
+  color: #6a1b9a;
+}
+
+.recipe-card p {
+  margin: 0.4rem 0;
+}
+
+/* Action Buttons (Edit/Delete) */
+.recipe-actions {
+  margin-top: 1rem;
+}
+
+.recipe-actions button {
+  background-color: #ddd;
+  color: #333;
+}
+
+.recipe-actions button.edit-btn {
+  background-color: #6a1b9a;
+  color: #fff;
+}
+
+.recipe-actions button.delete-btn {
+  background-color: #e53935;
+  color: #fff;
+}
+
+.recipe-actions button:hover {
+  opacity: 0.9;
+}
+
+/* Message Styling */
+.success {
+  color: green;
+  font-weight: 500;
+}
+
+.error {
+  color: red;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
   .container {
-    max-width: 700px;
-    margin: auto;
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 1rem;
   }
-  
-  input, textarea {
-    width: 100%;
-    padding: 0.7rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-  
+
   button {
-    background-color: #ab47bc;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    width: 100%;
+    margin-top: 0.5rem;
   }
-  
-  button:hover {
-    background-color: #8e24aa;
+
+  .recipe-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
+}
+
   
