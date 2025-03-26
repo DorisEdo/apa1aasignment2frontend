@@ -93,6 +93,14 @@ button:hover {
   margin: 0.4rem 0;
 }
 
+.recipe-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 0.75rem 0;
+}
+
+
 /* Action Buttons (Edit/Delete) */
 .recipe-actions {
   margin-top: 1rem;
